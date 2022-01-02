@@ -76,6 +76,7 @@ const Admin = () => {
                     <TableHeader>Host</TableHeader>
                     <TableHeader>Players</TableHeader>
                     <TableHeader>Date Added</TableHeader>
+                    {status === 'denied' && <TableHeader>Rejection Reason</TableHeader>}
                     <TableHeader>Actions</TableHeader>
                 </TableHeading>
 
@@ -109,6 +110,12 @@ const Admin = () => {
                         <TableData>
                             <Moment date={new Date(req.time * 1000)} format='MMM D, YYYY' />
                         </TableData>
+
+                        {status === 'denied' && (
+                            <TableData>
+                                {req.deniedReason}
+                            </TableData>
+                        )}
 
                         <TableData>
                             <Box className={classes.actions}>
