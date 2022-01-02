@@ -5,6 +5,7 @@ import {BrowserRouter, Route, Routes} from "react-router-dom";
 import {CssBaseline} from "@mui/material";
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import Navigation from "./components/Navigation";
+import Admin from "./pages/Admin";
 
 const theme = createTheme({
     typography: {
@@ -17,7 +18,7 @@ const theme = createTheme({
         },
     },
     navbar: {
-        width: '240px'
+        width: 240
     }
 })
 
@@ -31,7 +32,7 @@ ReactDOM.render(
                 <Route path='/servers' element={<div>add-server</div>}/>
                 <Route path='/ping' element={<div>ping</div>}/>
                 <Route path='/add-server' element={<div>add-server</div>}/>
-                <Route path='/admin' element={<div>admin</div>}/>
+                <Route path='/admin' element={<Admin />}/>
             </Routes>
         </ThemeProvider>
     </BrowserRouter>,
