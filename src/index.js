@@ -8,6 +8,7 @@ import Navigation from "./components/Navigation";
 import Admin from "./pages/Admin";
 import Ping from "./pages/Ping";
 import Servers from "./pages/Servers";
+import AddAServer from "./pages/AddAServer";
 
 const theme = createTheme({
     typography: {
@@ -33,7 +34,7 @@ ReactDOM.render(
                 <Route path='/' element={<App/>}/>
                 <Route path='/servers' element={<Servers />}/>
                 <Route path='/ping' element={<Ping />}/>
-                <Route path='/add-server' element={<div>add-server</div>}/>
+                <Route path='/add-server' element={<AddAServer />}/>
                 <Route path='/admin' element={<Admin />}/>
             </Routes>
         </ThemeProvider>
