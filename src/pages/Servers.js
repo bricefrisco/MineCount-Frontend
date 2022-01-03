@@ -33,7 +33,9 @@ const Servers = () => {
                     throw Error(res.message)
                 } else {
                     setLoading(false);
-                    setData(res);
+                    setData(res.sort((a, b) => {
+                        return b.players - a.players;
+                    }));
                     setError(false);
                 }
             })

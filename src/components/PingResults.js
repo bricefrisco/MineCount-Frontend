@@ -12,7 +12,8 @@ const useStyles = makeStyles((theme) => ({
     box: {
         maxWidth: 500,
         borderRadius: 10,
-        backgroundColor: theme.palette.background.paper
+        backgroundColor: theme.palette.background.paper,
+        marginBottom: 15
     },
     boxHeader: {
         display: 'flex',

@@ -1,5 +1,5 @@
 import React from 'react'
-import {Divider, Drawer, List, ListItem, ListItemIcon, ListItemText, Toolbar} from "@mui/material";
+import {Divider, Drawer, List, ListItem, ListItemIcon, ListItemText, Toolbar, Typography} from "@mui/material";
 import HomeIcon from '@mui/icons-material/Home';
 import StorageIcon from '@mui/icons-material/Storage';
 import NetworkCheckIcon from '@mui/icons-material/NetworkCheck';
@@ -58,6 +58,15 @@ const useStyles = makeStyles((theme) => ({
     },
     link: { // React router links
         textDecoration: 'none'
+    },
+    secondaryText: {
+        marginTop: '10px!important',
+        '&:hover': {
+            color: theme.palette.text.primary
+        }
+    },
+    secondaryTextSelected: {
+        color: theme.palette.text.primary + '!important'
     }
 }))
 
@@ -103,6 +112,13 @@ const Navigation = () => {
                             <AdminPanelSettingsIcon />
                         </ListItemIcon>
                         <ListItemText primary='Admin' />
+                    </ListItem>
+                </Link>
+
+                <Divider />
+                <Link to='/add-server' className={classes.link}>
+                    <ListItem key='Add Server'>
+                        <Typography variant='p' className={`${classes.secondaryText} ${location.pathname === '/add-server' && classes.secondaryTextSelected}`}>Add a server</Typography>
                     </ListItem>
                 </Link>
             </List>
