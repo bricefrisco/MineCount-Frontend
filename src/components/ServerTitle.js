@@ -11,7 +11,8 @@ const useStyles = makeStyles((theme) => ({
     },
     title: {
         color: theme.palette.text.primary,
-        fontWeight: 400
+        fontWeight: 400,
+        marginLeft: '10px!important'
     }
 }))
 

@@ -36,7 +36,7 @@ const Ping = () => {
         setData(null);
         setError(false);
 
-        fetch(`${process.env.REACT_APP_BACKEND_URI}ping?host=${host}&port=${!port ? '25565' : port}`)
+        fetch(`${process.env.REACT_APP_BACKEND_URI}ping?host=${host.trim()}&port=${!port ? '25565' : port.trim()}`)
             .then((res) => res.json())
             .then((res) => {
                 if (res.message) {
