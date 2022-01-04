@@ -26,32 +26,25 @@ const Ping = () => {
     const [host, setHost] = React.useState();
     const [defaultPort, setUseDefaultPort] = React.useState(true);
     const [port, setPort] = React.useState();
+    const [show, setShow] = React.useState(false);
 
-    const [loading, setLoading] = React.useState(false);
-    const [data, setData] = React.useState();
-    const [error, setError] = React.useState(false);
+    const onHostChange = (e) => {
+        setShow(false)
+        setHost(e.target.value)
+    }
 
-    const ping = () => {
-        setLoading(true);
-        setData(null);
-        setError(false);
+    const onPortChange = (e) => {
+        setShow(false)
+        setPort(e.target.value)
+    }
 
-        fetch(`${process.env.REACT_APP_BACKEND_URI}ping?host=${host.trim()}&port=${!port ? '25565' : port.trim()}`)
-            .then((res) => res.json())
-            .then((res) => {
-                if (res.message) {
-                    throw new Error(res.message)
-                } else {
-                    setLoading(false)
-                    setData(res)
-                    setError(false)
-                }
-            })
-            .catch((err) => {
-                setLoading(false)
-                setData(null)
-                setError(err.message)
-            })
+    const onDefaultPortChange = (e) => {
+        setShow(false)
+        setUseDefaultPort(e.target.checked)
+    }
+
+    const onPingClicked = (e) => {
+        setShow(true)
     }
 
     return (
@@ -61,7 +54,7 @@ const Ping = () => {
                     control={
                         <Checkbox
                             checked={defaultPort}
-                            onChange={(e) => setUseDefaultPort(e.target.checked)}
+                            onChange={onDefaultPortChange}
                         />
                     }
                     label='Default port (25565)'
@@ -76,7 +69,7 @@ const Ping = () => {
                     variant="filled"
                     placeholder='mc.example.com'
                     value={host}
-                    onChange={(e) => setHost(e.target.value)}
+                    onChange={onHostChange}
                 />
 
                 {!defaultPort && (
@@ -86,7 +79,7 @@ const Ping = () => {
                             placeholder='25565'
                             type='number'
                             value={port}
-                            onChange={(e) => setPort(e.target.value)}
+                            onChange={onPortChange}
                         />
                 )}
             </Box>
@@ -96,14 +89,16 @@ const Ping = () => {
                     variant={'contained'}
                     fullWidth
                     title='Ping'
-                    disabled={loading || !host || (!defaultPort && !port)}
-                    onClick={ping}
+                    disabled={!host || (!defaultPort && !port)}
+                    onClick={onPingClicked}
                 >
                     Ping
                 </Button>
             </Box>
 
-            <PingResults loading={loading} error={error} data={data} host={host} />
+            {show && (
+                <PingResults host={host} port={port} />
+            )}
         </Page>
     )
 }

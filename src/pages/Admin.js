@@ -72,7 +72,9 @@ const Admin = () => {
             <Table>
                 <TableHeading>
                     <TableHeader counter>#</TableHeader>
-                    <TableHeader>Server</TableHeader>
+                    {status !== 'pending' && (
+                        <TableHeader>Server</TableHeader>
+                    )}
                     <TableHeader>Host</TableHeader>
                     <TableHeader>Players</TableHeader>
                     <TableHeader>Date Added</TableHeader>
@@ -95,9 +97,11 @@ const Admin = () => {
                             {idx + 1}
                         </TableData>
 
-                        <TableData>
-                            <ServerTitle name={req.name} />
-                        </TableData>
+                        {status !== 'pending' && (
+                            <TableData>
+                                <ServerTitle name={req.name ? req.name : req.host} showImage={status !== 'pending'} />
+                            </TableData>
+                        )}
 
                         <TableData>
                             {req.host}
@@ -119,8 +123,8 @@ const Admin = () => {
 
                         <TableData>
                             <Box className={classes.actions}>
-                                <ApproveButton serverName={req.name} statusFilter={status} />
-                                <DenyButton serverName={req.name} statusFilter={status} />
+                                <ApproveButton host={req.host} port={req.port} status={status} />
+                                <DenyButton host={req.host} statusFilter={status} />
                             </Box>
                         </TableData>
                     </TableRow>

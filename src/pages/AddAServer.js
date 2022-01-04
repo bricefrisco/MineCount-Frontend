@@ -38,43 +38,46 @@ const AddAServer = () => {
     const [defaultPort, setUseDefaultPort] = React.useState(true);
     const [port, setPort] = React.useState();
 
-    const [loading, setLoading] = React.useState(false);
-    const [data, setData] = React.useState();
-    const [error, setError] = React.useState(false);
-
-    const [serverName, setServerName] = React.useState();
+    const [numPlayers, setNumPlayers] = React.useState(false);
+    const [showPing, setShowPing] = React.useState(false);
+    const [showSubmit, setShowSubmit] = React.useState(false)
 
     const [submitLoading, setSubmitLoading] = React.useState(false);
     const [submitData, setSubmitData] = React.useState();
     const [submitError, setSubmitError] = React.useState(false);
 
-    const hostRef = React.useRef(host);
+    const onUseDefaultPortChange = (e) => {
+        setNumPlayers(false);
+        setShowSubmit(false)
+        setShowPing(false)
+        setUseDefaultPort(e.target.value)
+    }
 
-    React.useEffect(() => {
-        hostRef.current = host;
-    }, [loading])
+    const onPortChange = (e) => {
+        setNumPlayers(false);
+        setShowSubmit(false)
+        setShowPing(false)
+        setPort(e.target.value)
+    }
 
-    const ping = () => {
-        setLoading(true);
-        setData(null);
-        setError(false);
+    const onHostChange = (e) => {
+        setNumPlayers(false);
+        setShowSubmit(false)
+        setShowPing(false)
+        setHost(e.target.value)
+    }
 
-        fetch(`${process.env.REACT_APP_BACKEND_URI}ping?host=${host.trim()}&port=${!port ? '25565' : port.trim()}`)
-            .then((res) => res.json())
-            .then((res) => {
-                if (res.message) {
-                    throw new Error(res.message)
-                } else {
-                    setLoading(false)
-                    setData(res)
-                    setError(false)
-                }
-            })
-            .catch((err) => {
-                setLoading(false)
-                setData(null)
-                setError(err.message)
-            })
+    const onPingClick = (e) => {
+        setShowPing(true)
+    }
+
+    const onPingSuccess = (e) => {
+        setShowSubmit(true)
+        setNumPlayers(e.players.online)
+    }
+
+    const onPingFail = (e) => {
+        setShowSubmit(false)
     }
 
     const submit = () => {
@@ -88,8 +91,7 @@ const AddAServer = () => {
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify({
-                host: hostRef.current,
-                name: serverName
+                host
             })
         })
             .then((res) => res.json())
@@ -117,7 +119,7 @@ const AddAServer = () => {
                     control={
                         <Checkbox
                             checked={defaultPort}
-                            onChange={(e) => setUseDefaultPort(e.target.checked)}
+                            onChange={onUseDefaultPortChange}
                         />
                     }
                     label='Default port (25565)'
@@ -132,7 +134,7 @@ const AddAServer = () => {
                     variant="filled"
                     placeholder='mc.example.com'
                     value={host}
-                    onChange={(e) => setHost(e.target.value)}
+                    onChange={onHostChange}
                 />
 
                 {!defaultPort && (
@@ -142,7 +144,7 @@ const AddAServer = () => {
                         placeholder='25565'
                         type='number'
                         value={port}
-                        onChange={(e) => setPort(e.target.value)}
+                        onChange={onPortChange}
                     />
                 )}
             </Box>
@@ -152,50 +154,39 @@ const AddAServer = () => {
                     variant={'contained'}
                     fullWidth
                     title='Ping'
-                    disabled={loading || !host || (!defaultPort && !port)}
-                    onClick={ping}
+                    disabled={!host || (!defaultPort && !port)}
+                    onClick={onPingClick}
                 >
                     Ping
                 </Button>
             </Box>
 
-            <PingResults loading={loading} error={error} data={data} host={host}/>
-
-            {data && data.players.online < 10 && (
-                <Alert severity="warning" className={classes.alert}>Server must have at least 10 players online - please try again once this requirement is met!</Alert>
+            {showPing && (
+                <PingResults host={host} port={port} onSuccess={onPingSuccess} onError={onPingFail} />
             )}
 
-            {data && data.players.online > 10 && (
-                <>
-                    <Typography variant='h5' className={classes.prompt}>
-                        What is the name of this server?
-                    </Typography>
-                    <Box className={classes.textBox}>
-                        <TextField
-                            fullWidth
-                            label="Name"
-                            variant="filled"
-                            value={serverName}
-                            onChange={(e) => setServerName(e.target.value)}
-                        />
-                    </Box>
-                    <Box className={classes.pingButton}>
-                        <Button
-                            variant={'contained'}
-                            fullWidth
-                            title='Submit'
-                            onClick={submit}
-                            disabled={submitLoading || submitData}
-                        >
-                            Submit
-                        </Button>
-                    </Box>
-                </>
+            {numPlayers && numPlayers < 10 && (
+                <Alert severity="warning" className={classes.alert}>Server must have at least 10 players online - please
+                    try again once this requirement is met!</Alert>
+            )}
+
+            {numPlayers && numPlayers >= 10 && showSubmit && (
+                <Box className={classes.pingButton}>
+                    <Button
+                        variant={'contained'}
+                        fullWidth
+                        title='Submit'
+                        onClick={submit}
+                        disabled={submitLoading || submitData}
+                    >
+                        Submit
+                    </Button>
+                </Box>
             )}
 
             {submitLoading && (
                 <Box className={classes.submitLoading}>
-                    <LinearProgress />
+                    <LinearProgress/>
                 </Box>
             )}
 
@@ -205,7 +196,8 @@ const AddAServer = () => {
 
             {submitData && (
                 <Alert severity="success" className={classes.alert}>
-                    Successfully submitted server. After review, this server will be added!
+                    Successfully submitted server.
+                    We will review the server, and add it as long as it is appropriate.
                     Please allow up to 48 hours for approvals to complete.
                 </Alert>
             )}
