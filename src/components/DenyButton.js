@@ -29,7 +29,7 @@ const useStyles = makeStyles((theme) => ({
     }
 }))
 
-const DenyButton = ({serverName, statusFilter}) => {
+const DenyButton = ({host, status}) => {
     const classes = useStyles();
 
     const [open, setOpen] = React.useState(false);
@@ -56,7 +56,7 @@ const DenyButton = ({serverName, statusFilter}) => {
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify({
-                name: serverName,
+                host,
                 status: 'denied',
                 deniedReason: rejectReason
             })
@@ -74,13 +74,13 @@ const DenyButton = ({serverName, statusFilter}) => {
             })
     }
 
-    if (statusFilter === 'denied') return null;
+    if (status === 'denied') return null;
 
     return (
         <>
             <Tooltip title={title()}>
             <span className={classes.deny}>
-                <IconButton disabled={statusFilter === 'denied' || loading || result || error} onClick={() => setOpen(true)}>
+                <IconButton disabled={status === 'denied' || loading || result || error} onClick={() => setOpen(true)}>
                     <DoDisturbOffIcon />
                 </IconButton>
             </span>

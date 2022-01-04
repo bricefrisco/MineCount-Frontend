@@ -53,13 +53,44 @@ const useStyles = makeStyles((theme) => ({
     }
 }))
 
-const PingResults = ({loading, error, data, host}) => {
+const PingResults = ({host, port, onSuccess, onError}) => {
     const classes = useStyles();
     const hostRef = React.useRef(host);
 
+    const [loading, setLoading] = React.useState(false);
+    const [data, setData] = React.useState();
+    const [error, setError] = React.useState(false);
+
     React.useEffect(() => {
-        hostRef.current = host;
-    }, [loading])
+        setLoading(true);
+        setData(null);
+        setError(false);
+
+        fetch(`${process.env.REACT_APP_BACKEND_URI}ping?host=${host.trim()}&port=${!port ? '25565' : port}`)
+            .then((res) => res.json())
+            .then((res) => {
+                if (res.message) {
+                    throw new Error(res.message)
+                } else {
+                    setLoading(false)
+                    setData(res)
+                    setError(false)
+
+                    if (onSuccess) {
+                        onSuccess(res)
+                    }
+                }
+            })
+            .catch((err) => {
+                setLoading(false)
+                setData(null)
+                setError(err.message)
+
+                if (onError) {
+                    onError(err.message)
+                }
+            })
+    }, [])
 
     if (error) {
         return (
